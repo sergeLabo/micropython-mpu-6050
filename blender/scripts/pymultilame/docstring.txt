@@ -1,0 +1,467 @@
+====blendergetobject====
+<code txt>
+FUNCTIONS
+    get_all_objects()
+        Trouve tous les objets des scènes actives
+        Retourne un dict {nom de l'objet: blender object}
+    
+    get_all_scenes()
+        Récupération des scènes
+    
+    get_scene_with_name(scn)
+        Récupération de la scène avec le nom
+
+</code>
+
+====blendersound====
+<code txt>
+DESCRIPTION
+    Classe générique qui permet de gérer facilement le son
+    dans le Blender Game Engine BGE.
+    
+    gl est le GameLogic, get with : from bge import logic as gl
+    
+    Appel de cette classe où tous les sons sont dans une liste avec :
+        import aud
+    
+        soundList = ["boum", ...] avec les fichiers boum.ogg etc...
+    
+        Création de l'objet qui est un dictionnaire
+    
+        gl.sound = EasyAudio(soundList)
+            soit { "boum": fabrique de boum.ogg, ....}
+        Joue le son boum
+            gl.sound["boum"].play()
+        Stop le son
+            gl.sound["boum"].stop()
+        Idem repeat, pause
+
+CLASSES
+        Factory
+    
+    class EasyAudio(builtins.dict)
+     |  Crée une usine pour chaque son, dans un dict.
+     |  
+     |  Method resolution order:
+     |      EasyAudio
+     |      builtins.dict
+     |      builtins.object
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, soundList, path, buffered=True)
+     |      soundList = ["boum", ...]
+     |      path example "//audio/comment/"
+    
+    class Factory(builtins.object)
+     |  Class usine pour chaque son.
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, audio_file_path, buffered=True)
+     |      audio_file_path = "//audio/comment/boum.ogg"
+     |      buffered = Boolean
+     |  
+     |  pause(self)
+     |      Pause
+     |  
+     |  play(self, volume=1)
+     |      play the audio, this return a handle to control play/pause/stop
+     |  
+     |  repeat(self, volume=1)
+     |      Repeat
+     |  
+     |  set_pitch(self, pitch)
+     |      Hauteur
+     |  
+     |  set_volume(self, vol)
+     |      Volume
+     |  
+     |  stop(self)
+     |      Stop
+
+</code>
+
+====blendertempo====
+<code txt>
+CLASSES
+        TempoFactory
+    
+    class Tempo(builtins.dict)
+     |  Création des tempos définies dans une liste de tuple:
+     |      * tempo_liste = [("intro", 60), ("print", 12), ("sound", 6)]
+     |  Chaque objet tempo:
+     |      * tempoDict = Tempo(tempo_liste)
+     |  Update des tempo à insérer dans un script qui tourne à chaque frame:
+     |      * tempoDict.update()
+     |  Appel d'une tempo:
+     |      * tempoDict["intro"].tempo
+     |  Voir exemple test() du __main__
+     |  
+     |  Method resolution order:
+     |      Tempo
+     |      builtins.dict
+     |      builtins.object
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, tempoList)
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |  
+     |  update(self)
+     |      D.update([E, ]**F) -> None.  Update D from dict/iterable E and F.
+     |      If E is present and has a .keys() method, then does:  for k in E: D[k] = E[k]
+     |      If E is present and lacks a .keys() method, then does:  for k, v in E: D[k] = v
+     |      In either case, this is followed by: for k in F:  D[k] = F[k]
+     |  
+         
+    class TempoFactory(builtins.object)
+     |  Les tempos sont en fait des compteurs qui sont mis à jour à chaque
+     |  frames de Blender avec update.
+     |  Pour une tempo de n, compte bien de 0 à n-1
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, periode=60)
+     |      Paramètres:
+     |      période: la tempo est remise à zéro si periode atteind, -1 = infinite loop
+     |      pas: incrément de la tempo, par défaut=1, aucun intérêt de changer le pas
+     |      verrou: si verrou, pas d'incrémentation.
+     |  
+     |  lock(self)
+     |      Verrou, je bloque
+     |  
+     |  reset(self)
+     |      Remise à zéro de la tempo
+     |  
+     |  unlock(self)
+     |      Pas de verrou, je peux incrémenter
+     |  
+     |  update(self)
+     |      J'incrémente si pas de verrou. Si verrou, je ne fais rien
+
+FUNCTIONS
+    test()
+        Tourne en dehors de Blender.
+
+</code>
+
+====blendertexture====
+<code txt>
+DESCRIPTION
+    Class générique qui permet de changer la texture d'un objet.
+    Ce script ne peut tourner que dans blender.
+
+CLASSES
+    class TextureChange(builtins.object)
+     |  Classe générique utilisable dans d'autres projects,
+     |  pour changer une texture d'un objet.
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, obj, old_tex)
+     |      obj     = objet concerné
+     |      old_tex = image de la texture originale, ex "danseur2.png"
+     |      new_tex = "//textures/perso.png"
+     |  
+     |  texture2old(self)
+     |      Effacement de l'objet python, pour retourner à l'ancienne texture.
+     |  
+     |  texture_new(self, new_tex)
+     |      Application de la nouvelle image de la texture.
+     |      
+     |      Répéter la fonction plusieurs fois (ex 5x) pour que
+     |      le changement marche.
+     |      Tous les object avec le matériau seront changés.
+
+</code>
+
+====blendertools====
+<code txt>
+FUNCTIONS
+    droiteAffine(x1, y1, x2, y2)
+        Retourne les valeurs de a et b de y=ax+b
+        à partir des coordonnées de 2 points.
+    
+    print_str_args(*args)
+        Imprime en terminal les variables en argument
+        Les variables doivent être sous forme de string,
+        par exemple
+        print_str_args("a")
+        imprime la variable a qui a une valeur 42
+        a = 42
+    
+    scene_change(sceneOld, sceneNew)
+        End of sceneOld, load sceneNew.
+        Scene must be str: if scene = scene python object, name is scene.name
+
+</code>
+
+====blenderviewport====
+<code txt>
+FUNCTIONS
+    disable_viewport(cam)
+        Disable
+    
+    enable_full_viewport(cam)
+        cam is blender object
+    
+    enable_half_viewport(cam1, cam2)
+        cam1 and 2 are blender objects
+    
+    enable_quad_viewport(cam1, cam2, cam3, cam4)
+        cam1 2 3 4 are blender objects
+    
+    enable_stereo_viewport(cam1, cam2)
+        cam1 and 2 are blender objects
+
+</code>
+
+====fifolist====
+<code txt>
+CLASSES
+    class PileFIFO(builtins.object)
+     |  Pile FIFO pour faire des statistiques
+     |  sur les dernières valeurs d'une variable.
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, size)
+     |      size définit la hauteur de la pile.
+     |  
+     |  append(self, new)
+     |      Ajoute pour avoir une pile constante de size valeurs.
+     |  
+     |  average_calcul(self)
+     |      Maj de la valeur moyenne de la pile.
+     |  
+     |  inconsistency(self)
+     |      La dernière valeur est-elle cohérente par rapport aux précédentes ?
+     |      à lancer après append et average_calcul
+
+</code>
+
+====getmyip====
+<code txt>
+FUNCTIONS
+    get_my_ip()
+        Retourne l'adresse ip du pc sur le réseau local.
+        Valable pour python 3.x
+        Non valable sur android
+
+</code>
+
+====httpdownload====
+<code txt>
+DESCRIPTION
+    Télécharge une url.
+    Peut aussi l'enregister
+
+CLASSES
+    class HttpDownload(builtins.object)
+     |  Télécharge une url.
+     |  
+     |  Retourne
+     |      - un string si text (html)
+     |      - des bytes si fichier
+     |  Enregistre dans un fichier
+     |  
+     |  Usage:
+     |      hd = HttpDownload()
+     |      # recupère la réponse
+     |      resp = hd.get_response(url, timeout=2)
+     |      # ou enregistre          
+     |      hd.save_response(u, timeout=2, name=name)
+     |      # ou les 2
+     |      resp = hd.save_response(u, timeout=2, name=name)
+     |  
+     |  Methods defined here:
+     |  
+     |  decode_or_not(self, response)
+     |      Decode utf-8 si text, rien si fichier.
+     |      Donc text = utf-8, fichier = bytes
+     |  
+     |  get_response(self, someurl, timeout=2)
+     |      Retourne la réponse de la requête, decodée si str
+     |  
+     |  request(self, someurl, timeout=2)
+     |      Télécharge une url.
+     |      Retourne des bytes: https://bit.ly/2wau8j1 ou string vide
+     |  
+     |  save_response(self, someurl, timeout=2, name='toto')
+     |      Enregistre la réponse de la requête à someurl,
+     |      dans un fichier name
+     |      Retourne aussi la réponse.
+     |      Si réponse None, ne fera rien, retourne None
+
+FUNCTIONS
+    save_data_in_file(data, fichier, mode)
+        Mode 'w' écrit un string dans le fichier
+        Mode 'wb' écrit des bytes dans le fichier
+        donc enregistre un fichier
+        w ecrase
+        a ajoute
+
+</code>
+
+====multicast====
+<code txt>
+CLASSES
+    class Multicast(builtins.object)
+     |  Récupère des datas en Multicast.
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, ip, port, buffer_size=1024)
+     |      Initialize self.  See help(type(self)) for accurate signature.
+     |  
+     |  create_sock(self)
+     |      Création d'un socket multicast self.sock.
+     |  
+     |  receive(self)
+     |      Retourne les datas brutes reçue sur multicast.
+     |  
+     |  send_to(self, msg, addr)
+     |      Envoi de msg à addr en multicast.
+
+</code>
+
+====myconfig====
+<code txt>
+DESCRIPTION
+    Le fichier ini doit être défini avec son chemin absolu
+    
+    Pour un projet python:
+        import os
+        dossier = os.path.dirname(os.path.abspath(__file__))
+        ou
+        os.getcwd()
+    
+    Pour un projet Blender, le chemin complet est trouvé avec:
+        bge.logic.expandPath()
+
+CLASSES
+    class MyConfig(builtins.object)
+     |  Charge la configuration depuis le fichier *.ini,
+     |  sauve les changement de configuration,
+     |  enregistre les changements par section, clé.
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, ini_file)
+     |      Charge la config depuis un fichier *.ini
+     |      Le cemin doit être donné avec son chemin absolu.
+     |  
+     |  load_config(self)
+     |      Lit le fichier *.ini, et copie la config dans un dictionnaire.
+     |  
+     |  save_config(self, section, key, value)
+     |      Sauvegarde dans le fichioer *.ini  avec section, key, value.
+     |      Uniquement int, float, str
+
+</code>
+
+====mytools====
+<code txt>
+DESCRIPTION
+    Des méthodes souvent appelées par les autres scripts,
+    regroupées dans une class MyTools
+
+CLASSES
+    class MyTools(builtins.object)
+     |  Methods defined here:
+     |  
+     |  create_directory(self, directory)
+     |      Crée le répertoire avec le chemin absolu.
+     |      ex: /media/data/3D/projets/meteo/meteo_forecast/2017_06
+     |  
+     |  data_to_json(self, data)
+     |      Retourne le json des datas
+     |  
+     |  get_absolute_path(self, a_file_or_a_directory)
+     |      Retourne le chemin absolu d'un répertoire ou d'un fichier
+     |      n'importe où.
+     |  
+     |  get_all_files_list(self, root, file_end)
+     |      Lit le dossier et tous les sous-dosssiers.
+     |      Retourne une liste de tous les fichiers avec l'extension file_end
+     |      avec le chemin absolu
+     |      exemple:
+     |          "network/http_download.py"
+     |  
+     |  get_all_sub_directories(self, root)
+     |      Retourne la liste de tous les sous-répertoires, et du répertoire,
+     |      y compris les __pycache__
+     |  
+     |  get_json_file(self, fichier)
+     |      Retourne le json décodé des datas lues
+     |      dans le fichier avec son chemin/nom.
+     |  
+     |  print_all_key_value(self, my_dict)
+     |      Imprime un dict contenant un dict,
+     |      affiche le nombre de clés total.
+     |  
+     |  read_file(self, file_name)
+     |      Retourne les datas lues dans le fichier avec son chemin/nom
+     |      Retourne None si fichier inexistant ou impossible à lire .
+     |  
+     |  run_command_system(self, command)
+     |      Excécute la command shell.
+     |      command = liste
+     |      
+     |      ou
+     |      resp = subprocess.call(command.split())
+     |      ou
+     |      resp = subprocess.getoutput(command.split())
+     |      
+     |      return resp
+     |  
+     |  write_data_in_file(self, data, fichier, mode)
+     |      Ecrit data dans le fichier.
+     |      Mode 'w' écrit un string dans le fichier
+     |      Mode 'wb' écrit des bytes dans le fichier
+     |      w écrase
+     |      a ajoute
+
+</code>
+
+====tcpclient====
+<code txt>
+</code>
+
+====udpclient====
+<code txt>
+DESCRIPTION
+    Recréer un socket avant chaque envoi ou réception, résoud les problèmes
+    de réseau, ça se reconnecte tout seul.
+    Par contre, le port éphémère du recvfrom changera à chaque fois.
+
+CLASSES
+    class UdpClient(builtins.object)
+     |  Envoi et reception en UDP.
+     |  Cette classe n'encode pas le message à envoyer.
+     |  
+     |  Methods defined here:
+     |  
+     |  __init__(self, buffer_size=1024, timeout=0.01)
+     |      Création d'un socket UDP.
+     |      buffer_size = entier, permet de vider le buffer à chaque lecture,
+     |      pour avoir toujours la dernière valeur.
+     |  
+     |  bind(self, addr)
+     |      Quelle est la différence avec connect ?
+     |  
+     |  close(self)
+     |  
+     |  connect(self, addr)
+     |      Connexion à l'adresse pour recevoir addr = tuple.
+     |  
+     |  listen(self)
+     |      Retourne les datas et l'adresse reçue.
+     |  
+     |  send_to(self, req, address)
+     |      Envoi à l'adresse = (ip, port).
+
+</code>
+
+
